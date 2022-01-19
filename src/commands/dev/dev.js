@@ -15,7 +15,6 @@ const {
   NETLIFYDEV,
   NETLIFYDEVERR,
   NETLIFYDEVLOG,
-  NETLIFYDEVWARN,
   chalk,
   detectServerSettings,
   exit,
@@ -96,12 +95,12 @@ const runCommand = (command, env = {}) => {
         NETLIFYDEVERR,
         `Failed running command: ${command}. Please verify ${chalk.magenta(`'${commandWithoutArgs}'`)} exists`,
       )
+    } else if (result.failed) {
+      log(`${NETLIFYDEVERR} ${result.shortMessage}. Shutting down Netlify Dev server`)
+      // eslint-disable-next-line promise/always-return
     } else {
-      const errorMessage = result.failed
-        ? `${NETLIFYDEVERR} ${result.shortMessage}`
-        : `${NETLIFYDEVWARN} "${command}" exited with code ${result.exitCode}`
-
-      log(`${errorMessage}. Shutting down Netlify Dev server`)
+      log(`${NETLIFYDEVLOG} "${command}" exited with code ${result.exitCode}. Shutting down Netlify Dev server`)
+      process.exit()
     }
     process.exit(1)
   })
